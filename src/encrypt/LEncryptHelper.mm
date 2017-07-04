@@ -60,12 +60,22 @@ static LEncryptHelper *helper = nil;
     
     NSInteger length = [aData length];
     char temp[[aData length]];
-    [aData getBytes:&temp range:NSMakeRange(0, [aData length] - 1)];
+    int position = 0;
+    [aData getBytes:&temp range:NSMakeRange(0, [aData length])];
     for (int i = 0; i < [aData length]; i+=8) {
         char test[8];
-        if (i + 8 < length) {
+        if (i + 8 <= length) {
             for (int j = 0; j < 8; j++) {
                 test[j] = temp[i + j];
+            }
+        } else {
+            for (int j = 0; j < 8; j++) {
+                if (j + i >= length) {
+                    test[j] = 0;
+                } else {
+                    test[j] = temp[i + j];
+                    position++;
+                }
             }
         }
         
@@ -81,6 +91,10 @@ static LEncryptHelper *helper = nil;
             [retData appendBytes:&byte length:1];
         }
     }
+    
+    //补位长度
+    Byte byte = (Byte)(0XFF & position);
+    [retData appendBytes:&byte length:1];
     
     return retData;
 }
@@ -108,10 +122,14 @@ static LEncryptHelper *helper = nil;
     retData = [NSMutableData data];
     NSInteger length = [aData length];
     char temp[[aData length]];
-    [aData getBytes:&temp range:NSMakeRange(0, [aData length] - 1)];
-    for (int i = 0; i < [aData length]; i+=8) {
+    [aData getBytes:&temp range:NSMakeRange(0, [aData length])];
+    
+    //获取补位长度
+    int position = temp[[aData length]-1];;
+    
+    for (int i = 0; i < [aData length] - 1; i+=8) {
         char test[8];
-        if (i + 8 < length) {
+        if (i + 8 <= length) {
             for (int j = 0; j < 8; j++) {
                 test[j] = temp[i + j];
             }
@@ -120,7 +138,13 @@ static LEncryptHelper *helper = nil;
         std::bitset<64> plain = charToBitset(test);
         std::bitset<64> temp_plain = decrypt(plain);
         
-        for (int i = 0; i < 8; i ++) {
+        int to = 8;
+        if (position != 0) {
+            if (i + 8 == [aData length] - 1) {
+                to = position;
+            }
+        }
+        for (int i = 0; i < to; i ++) {
             std::bitset<8> temp;
             for (int j = 0; j < 8; j ++) {
                 temp[j] = temp_plain[i * 8 + j];
