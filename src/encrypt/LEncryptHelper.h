@@ -6,6 +6,10 @@
 
 #import <Foundation/Foundation.h>
 
+/*!
+ *  加密工具
+ *
+ */
 @interface LEncryptHelper : NSObject
 
 /*!
@@ -14,11 +18,17 @@
 + (instancetype)shareHelper;
 
 /*!
- *  \~chinese
- *  Des加密
+ *  设置des密钥，如果设置，DES加密解密方法无需传入密钥
+ *
+ *  @param aKey     密钥
+ */
+- (void)setDesKey:(NSString*)aKey;
+
+/*!
+ *  DES加密
  *
  *  @param aData    需要加密的数据
- *  @param aKey     秘钥
+ *  @param aKey     密钥
  *
  *  @result 加密数据
  */
@@ -26,14 +36,37 @@
                            key:(NSString*)aKey;
 
 /*!
- *  \~chinese
- *  Des解密
+ *  DES解密
  *
  *  @param aData    需要解密的数据
- *  @param aKey     秘钥
+ *  @param aKey     密钥
  *
  *  @result 解密数据
  */
-- (NSData *)desDecodeWithData:(NSData*)aData key:(NSString*)aKey;
+- (NSData *)desDecodeWithData:(NSData*)aData
+                          key:(NSString*)aKey;
+
+/*!
+ *  AES加密
+ *
+ *  @param aData    需要加密的数据
+ *  @param aKey     密钥，如果穿nil，用内部默认256bit位密钥
+ *
+ *  @result 加密数据
+ */
+- (NSData *)aesEncryptWithData:(NSData*)aData
+                           key:(NSString*)aKey;
+
+
+/*!
+ *  AES解密
+ *
+ *  @param aData    需要解密的数据
+ *  @param aKey     密钥，如果穿nil，用内部默认256bit位密钥
+ *
+ *  @result 加密数据
+ */
+- (NSData *)aesDecodeWithData:(NSData*)aData
+                          key:(NSString*)aKey;;
 
 @end
