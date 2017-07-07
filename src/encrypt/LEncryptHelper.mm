@@ -171,6 +171,7 @@ static LEncryptHelper *helper = nil;
 
 - (NSData *)aesEncryptWithData:(NSData*)aData
                            key:(NSString *)aKey
+                          type:(LEncryptType)aType
 {
     NSMutableData *retData = nil;
     if (![self _validWithData:aData]) {
@@ -211,23 +212,67 @@ static LEncryptHelper *helper = nil;
     uint8_t *w = [self _getWWithKey:aKey];
     NSInteger length = [aData length];
     retData = [NSMutableData data];
-    int baseLength = 16;
-    for (int i = 0; i < length; i+=baseLength) {
-        Byte temp[baseLength];
-        Byte outTemp[baseLength];
-        int tempLength = 0;
-        if (i + baseLength < length) {
-            tempLength = baseLength;
-            [aData getBytes:&temp range:NSMakeRange(i, tempLength)];
-        } else {
-            tempLength = (int)length - i;
-            [aData getBytes:&temp range:NSMakeRange(i, tempLength)];
-            for (int j = (int)length - i; j < baseLength; j++ ) {
-                temp[j] = 0;
+    switch (aType) {
+        case LEncryptECB:
+        {
+            int baseLength = 16;
+            for (int i = 0; i < length; i+=baseLength) {
+                Byte temp[baseLength];
+                Byte outTemp[baseLength];
+                int tempLength = 0;
+                if (i + baseLength < length) {
+                    tempLength = baseLength;
+                    [aData getBytes:&temp range:NSMakeRange(i, tempLength)];
+                } else {
+                    tempLength = (int)length - i;
+                    [aData getBytes:&temp range:NSMakeRange(i, tempLength)];
+                    for (int j = (int)length - i; j < baseLength; j++ ) {
+                        temp[j] = 0;
+                    }
+                }
+                cipher(temp, outTemp, w);
+                [retData appendBytes:&outTemp length:baseLength];
             }
         }
-        cipher(temp, outTemp, w);
-        [retData appendBytes:&outTemp length:baseLength];
+            break;
+        case LEncryptCBC:
+        {
+            int baseLength = 16;
+            Byte last[baseLength];
+            BOOL isFirst = YES;
+            for (int i = 0; i < length; i+=baseLength) {
+                Byte temp[baseLength];
+                Byte outTemp[baseLength];
+                int tempLength = 0;
+                if (i + baseLength < length) {
+                    tempLength = baseLength;
+                    [aData getBytes:&temp range:NSMakeRange(i, tempLength)];
+                } else {
+                    tempLength = (int)length - i;
+                    [aData getBytes:&temp range:NSMakeRange(i, tempLength)];
+                    for (int j = (int)length - i; j < baseLength; j++ ) {
+                        temp[j] = 0;
+                    }
+                }
+                
+                if (!isFirst) {
+                    for (int j = 0; j < baseLength; j++) {
+                        temp[j] = last[j] ^ temp[j];
+                    }
+                } else {
+                    isFirst = NO;
+                }
+                
+                cipher(temp, outTemp, w);
+                
+                for (int j = 0; j < baseLength; j++) {
+                    last[j] = outTemp[j];
+                }
+                
+                [retData appendBytes:&outTemp length:baseLength];
+            }
+        }
+            break;
     }
     
     return retData;
@@ -235,6 +280,7 @@ static LEncryptHelper *helper = nil;
 
 - (NSData *)aesDecodeWithData:(NSData *)aData
                           key:(NSString *)aKey
+                         type:(LEncryptType)aType
 {
     NSMutableData *retData = nil;
     if (![self _validWithData:aData]) {
@@ -244,19 +290,60 @@ static LEncryptHelper *helper = nil;
     uint8_t *w = [self _getWWithKey:aKey];
     NSInteger length = [aData length];
     retData = [NSMutableData data];
-    int baseLength = 16;
-    for (int i = 0; i < length; i+=baseLength) {
-        Byte temp[baseLength];
-        Byte outTemp[baseLength];
-        int tempLength = 0;
-        if (i + baseLength < length) {
-            tempLength = baseLength;
-        } else {
-            tempLength = (int)length - i;
+    
+    switch (aType) {
+        case LEncryptECB:
+        {
+            int baseLength = 16;
+            for (int i = 0; i < length; i+=baseLength) {
+                Byte temp[baseLength];
+                Byte outTemp[baseLength];
+                int tempLength = 0;
+                if (i + baseLength < length) {
+                    tempLength = baseLength;
+                } else {
+                    tempLength = (int)length - i;
+                }
+                [aData getBytes:&temp range:NSMakeRange(i, tempLength)];
+                inv_cipher(temp, outTemp, w);
+                [retData appendBytes:&outTemp length:baseLength];
+            }
         }
-        [aData getBytes:&temp range:NSMakeRange(i, tempLength)];
-        inv_cipher(temp, outTemp, w);
-        [retData appendBytes:&outTemp length:baseLength];
+            break;
+        case LEncryptCBC:
+        {
+            int baseLength = 16;
+            Byte last[baseLength];
+            BOOL isFirst = YES;
+            for (int i = 0; i < length; i+=baseLength) {
+                Byte temp[baseLength];
+                Byte outTemp[baseLength];
+                int tempLength = 0;
+                if (i + baseLength < length) {
+                    tempLength = baseLength;
+                } else {
+                    tempLength = (int)length - i;
+                }
+                [aData getBytes:&temp range:NSMakeRange(i, tempLength)];
+                
+                inv_cipher(temp, outTemp, w);
+                
+                if (!isFirst) {
+                    for (int j = 0; j < baseLength; j++) {
+                        outTemp[j] = outTemp[j] ^ last[j];
+                    }
+                } else {
+                    isFirst = NO;
+                }
+                
+                for (int j = 0; j < baseLength; j++) {
+                    last[j] = temp[j];
+                }
+                
+                [retData appendBytes:&outTemp length:baseLength];
+            }
+        }
+            break;
     }
     
     return retData;

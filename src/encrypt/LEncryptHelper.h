@@ -6,6 +6,11 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum{
+    LEncryptECB = 0,
+    LEncryptCBC,
+}LEncryptType;
+
 /*!
  *  加密工具
  *
@@ -51,11 +56,13 @@
  *
  *  @param aData    需要加密的数据
  *  @param aKey     密钥，如果穿nil，用内部默认256bit位密钥
+ *  @param aType    加密模式
  *
  *  @result 加密数据
  */
 - (NSData *)aesEncryptWithData:(NSData*)aData
-                           key:(NSString*)aKey;
+                           key:(NSString*)aKey
+                          type:(LEncryptType)aType;
 
 
 /*!
@@ -63,10 +70,12 @@
  *
  *  @param aData    需要解密的数据
  *  @param aKey     密钥，如果穿nil，用内部默认256bit位密钥
+ *  @param aType    加密模式
  *
  *  @result 加密数据
  */
 - (NSData *)aesDecodeWithData:(NSData*)aData
-                          key:(NSString*)aKey;;
+                          key:(NSString*)aKey
+                         type:(LEncryptType)aType;
 
 @end

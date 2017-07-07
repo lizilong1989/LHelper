@@ -115,10 +115,14 @@
     NSData *data = [text dataUsingEncoding:NSUTF8StringEncoding];
     
     //DES加密
-    NSData *encryptData = [[LEncryptHelper shareHelper] aesEncryptWithData:data key:@"12345678abcdefgh"];
+    NSData *encryptData = [[LEncryptHelper shareHelper] aesEncryptWithData:data
+                                                                       key:@"12345678abcdefgh"
+                                                                      type:LEncryptECB];
     
     //DES解密
-    NSData *decodeData = [[LEncryptHelper shareHelper] aesDecodeWithData:encryptData key:@"12345678abcdefgh"];
+    NSData *decodeData = [[LEncryptHelper shareHelper] aesDecodeWithData:encryptData
+                                                                     key:@"12345678abcdefgh"
+                                                                    type:LEncryptECB];
     
     _textView.text = [NSString stringWithFormat:@"AES\ndata:%@\nencryptData:%@\ndecodeData:%@\n%@\n",data,encryptData,decodeData,[[NSString alloc] initWithData:decodeData encoding:NSUTF8StringEncoding]];
 }
