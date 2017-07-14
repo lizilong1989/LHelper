@@ -13,6 +13,7 @@
 @interface ViewController ()
 
 @property (nonatomic, strong) UITextField *textField;
+@property (nonatomic, strong) UITextField *pwdField;
 @property (nonatomic, strong) UITextView *textView;
 @property (nonatomic, strong) UIButton *desBtn;
 @property (nonatomic, strong) UIButton *aesBtn;
@@ -26,6 +27,7 @@
     // Do any additional setup after loading the view, typically from a nib.
     
     [self.view addSubview:self.textField];
+    [self.view addSubview:self.pwdField];
     [self.view addSubview:self.desBtn];
     [self.view addSubview:self.aesBtn];
     [self.view addSubview:self.textView];
@@ -44,11 +46,22 @@
     return _textField;
 }
 
+- (UITextField *)pwdField
+{
+    if (_pwdField == nil) {
+        _pwdField = [[UITextField alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_textField.frame) + 5, CGRectGetWidth(self.view.frame), 50)];
+        _pwdField.placeholder = @"输入加密密钥";
+        _pwdField.layer.borderColor = [UIColor lightGrayColor].CGColor;
+        _pwdField.layer.borderWidth = 0.5;
+    }
+    return _pwdField;
+}
+
 - (UIButton *)desBtn
 {
     if (_desBtn == nil) {
         _desBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        _desBtn.frame = CGRectMake(0, CGRectGetMaxY(_textField.frame) + 5, CGRectGetWidth(self.view.frame), 50);
+        _desBtn.frame = CGRectMake(0, CGRectGetMaxY(_pwdField.frame) + 5, CGRectGetWidth(self.view.frame), 50);
         _desBtn.backgroundColor = [UIColor purpleColor];
         [_desBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [_desBtn setTitle:@"DES加密" forState:UIControlStateNormal];
@@ -90,16 +103,20 @@
         return;
     }
     
+    if (_pwdField.text.length == 0) {
+        return;
+    }
+    
     NSData *data = [text dataUsingEncoding:NSUTF8StringEncoding];
     
     //设置DES密钥
     [[LEncryptHelper shareHelper] setDesKey:@"12345678"];
     
     //DES加密
-    NSData *encryptData = [[LEncryptHelper shareHelper] desEncryptWithData:data key:nil];
+    NSData *encryptData = [[LEncryptHelper shareHelper] desEncryptWithData:data key:_pwdField.text];
     
     //DES解密
-    NSData *decodeData = [[LEncryptHelper shareHelper] desDecodeWithData:encryptData key:nil];
+    NSData *decodeData = [[LEncryptHelper shareHelper] desDecodeWithData:encryptData key:_pwdField.text];
     
     _textView.text = [NSString stringWithFormat:@"DES\ndata:%@\nencryptData:%@\ndecodeData:%@\n%@\n",data,encryptData,decodeData,[[NSString alloc] initWithData:decodeData encoding:NSUTF8StringEncoding]];
 }
@@ -112,16 +129,20 @@
         return;
     }
     
+    if (_pwdField.text.length == 0) {
+        return;
+    }
+    
     NSData *data = [text dataUsingEncoding:NSUTF8StringEncoding];
     
     //DES加密
     NSData *encryptData = [[LEncryptHelper shareHelper] aesEncryptWithData:data
-                                                                       key:@"12345678abcdefgh"
+                                                                       key:_pwdField.text
                                                                       type:LEncryptECB];
     
     //DES解密
     NSData *decodeData = [[LEncryptHelper shareHelper] aesDecodeWithData:encryptData
-                                                                     key:@"12345678abcdefgh"
+                                                                     key:_pwdField.text
                                                                     type:LEncryptECB];
     
     _textView.text = [NSString stringWithFormat:@"AES\ndata:%@\nencryptData:%@\ndecodeData:%@\n%@\n",data,encryptData,decodeData,[[NSString alloc] initWithData:decodeData encoding:NSUTF8StringEncoding]];

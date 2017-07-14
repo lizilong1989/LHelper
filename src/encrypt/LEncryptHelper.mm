@@ -6,6 +6,8 @@
 
 #import "LEncryptHelper.h"
 
+#import <CommonCrypto/CommonCrypto.h>
+
 #include "des.hpp"
 #include "aes.hpp"
 
@@ -62,6 +64,7 @@ static LEncryptHelper *helper = nil;
 
 - (NSData *)desEncryptWithData:(NSData*)aData
                            key:(NSString *)aKey
+
 {
     NSMutableData *retData = nil;
     if (![self _validWithData:aData]) {
@@ -74,6 +77,9 @@ static LEncryptHelper *helper = nil;
         generateKeys();
     }
     
+    return [self EMAES256EncryptWithKey:[aKey dataUsingEncoding:NSUTF8StringEncoding] data:aData];
+
+    /*
     retData = [NSMutableData data];
     
     NSInteger length = [aData length];
@@ -113,7 +119,7 @@ static LEncryptHelper *helper = nil;
     Byte byte = (Byte)(position);
     [retData appendBytes:&byte length:1];
     
-    return retData;
+    return retData;*/
 }
 
 
@@ -131,6 +137,8 @@ static LEncryptHelper *helper = nil;
         generateKeys();
     }
     
+    return [self EMAES256DecryptWithKey:[aKey dataUsingEncoding:NSUTF8StringEncoding] data:aData];
+/*
     retData = [NSMutableData data];
     NSInteger length = [aData length];
     char temp[[aData length]];
@@ -165,6 +173,7 @@ static LEncryptHelper *helper = nil;
     }
     
     return retData;
+ */
 }
 
 #pragma mark - AES
@@ -273,6 +282,41 @@ static LEncryptHelper *helper = nil;
             }
         }
             break;
+        case LEncryptCTR:
+        {
+            int baseLength = 16;
+            int counter = 100;
+            for (int i = 0; i < length; i+=baseLength) {
+                Byte temp[baseLength];
+                Byte outTemp[baseLength];
+                int tempLength = 0;
+                if (i + baseLength < length) {
+                    tempLength = baseLength;
+                    [aData getBytes:&temp range:NSMakeRange(i, tempLength)];
+                } else {
+                    tempLength = (int)length - i;
+                    [aData getBytes:&temp range:NSMakeRange(i, tempLength)];
+                    for (int j = (int)length - i; j < baseLength; j++ ) {
+                        temp[j] = 0;
+                    }
+                }
+                
+                NSData *counterData = [[NSString stringWithFormat:@"%d",counter] dataUsingEncoding:NSUTF8StringEncoding];
+                Byte counterByte[baseLength];
+                [counterData getBytes:&counterByte range:NSMakeRange(0, [counterData length])];
+                for (int j = (int)[counterData length]; j < baseLength; j++ ) {
+                    counterByte[j] = baseLength - (int)[counterData length];
+                }
+                cipher(counterByte, outTemp, w);
+                for (int j = 0; j < baseLength; j ++) {
+                    temp[j] = temp[j] ^ outTemp[j];
+                }
+                
+                counter ++;
+                [retData appendBytes:&temp length:baseLength];
+            }
+        }
+            break;
     }
     
     return retData;
@@ -344,6 +388,41 @@ static LEncryptHelper *helper = nil;
             }
         }
             break;
+        case LEncryptCTR:
+        {
+            int baseLength = 16;
+            int counter = 100;
+            for (int i = 0; i < length; i+=baseLength) {
+                Byte temp[baseLength];
+                Byte outTemp[baseLength];
+                int tempLength = 0;
+                if (i + baseLength < length) {
+                    tempLength = baseLength;
+                    [aData getBytes:&temp range:NSMakeRange(i, tempLength)];
+                } else {
+                    tempLength = (int)length - i;
+                    [aData getBytes:&temp range:NSMakeRange(i, tempLength)];
+                    for (int j = (int)length - i; j < baseLength; j++ ) {
+                        temp[j] = 0;
+                    }
+                }
+                
+                NSData *counterData = [[NSString stringWithFormat:@"%d",counter] dataUsingEncoding:NSUTF8StringEncoding];
+                Byte counterByte[baseLength];
+                [counterData getBytes:&counterByte range:NSMakeRange(0, [counterData length])];
+                for (int j = (int)[counterData length]; j < baseLength; j++ ) {
+                    counterByte[j] = baseLength - (int)[counterData length];
+                }
+                cipher(counterByte, outTemp, w);
+                for (int j = 0; j < baseLength; j ++) {
+                    temp[j] = temp[j] ^ outTemp[j];
+                }
+                
+                counter ++;
+                [retData appendBytes:&temp length:baseLength];
+            }
+        }
+            break;
     }
     
     return retData;
@@ -397,6 +476,87 @@ static LEncryptHelper *helper = nil;
     }
     
     return YES;
+}
+
+- (Byte)_getSequenceWithIndex:(NSInteger)aIndex
+{
+    int baseLength = 16;
+    NSData *counterData = [[NSString stringWithFormat:@"%ld",(long)aIndex] dataUsingEncoding:NSUTF8StringEncoding];
+    Byte counterByte[baseLength];
+    [counterData getBytes:&counterByte range:NSMakeRange(0, [counterData length])];
+    for (int j = (int)[counterData length]; j < baseLength; j++ ) {
+        counterByte[j] = baseLength - (int)[counterData length];
+    }
+    
+    return counterByte[baseLength];
+}
+
+- (NSData *)EMAES256EncryptWithKey:(NSData *)key data:(NSData*)aData{
+    const void * keyPtr2;
+    if ([key length] < 32) {
+        NSMutableData *temp = [NSMutableData dataWithData:key];
+        int length = (int)[temp length];
+        for (int i = 0; i < 32- length; i++) {
+            Byte byte = 32- length;
+            [temp appendBytes:&byte length:1];
+        }
+                keyPtr2 = [temp bytes];
+    } else {
+        keyPtr2 = [[key subdataWithRange:NSMakeRange(0, 32)] bytes];
+    }
+    
+    NSUInteger dataLength = [aData length];
+    size_t bufferSize = dataLength + kCCBlockSizeAES128;
+    void *buffer = malloc(bufferSize);
+    
+    size_t numBytesEncrypted = 0;
+    CCCryptorStatus cryptStatus = CCCrypt(kCCEncrypt, kCCAlgorithmAES128,
+                                          kCCOptionPKCS7Padding | kCCOptionECBMode,
+                                          keyPtr2, kCCKeySizeAES256,
+                                          NULL,/* 初始化向量(可选) */
+                                          [aData bytes], dataLength,/*输入*/
+                                          buffer, bufferSize,/* 输出 */
+                                          &numBytesEncrypted);
+    
+    if (cryptStatus == kCCSuccess) {
+        return [NSData dataWithBytesNoCopy:buffer length:numBytesEncrypted];
+    }
+    free(buffer);//释放buffer
+    return nil;
+}
+
+- (NSData *)EMAES256DecryptWithKey:(NSData *)key data:(NSData*)aData{
+    const void * keyPtr2;
+    if ([key length] < 32) {
+        NSMutableData *temp = [NSMutableData dataWithData:key];
+        int length = (int)[temp length];
+        for (int i = 0; i < 32- length; i++) {
+            Byte byte = 32- length;
+            [temp appendBytes:&byte length:1];
+        }
+        keyPtr2 = [temp bytes];
+    } else {
+        keyPtr2 = [[key subdataWithRange:NSMakeRange(0, 32)] bytes];
+    }
+    char (*keyPtr)[32] = (char (*)[32])keyPtr2;
+    
+    NSUInteger dataLength = [aData length];
+    size_t bufferSize = dataLength + kCCBlockSizeAES128;
+    void *buffer = malloc(bufferSize);
+    
+    size_t numBytesDecrypted = 0;
+    CCCryptorStatus cryptStatus = CCCrypt(kCCDecrypt, kCCAlgorithmAES128,
+                                          kCCOptionPKCS7Padding | kCCOptionECBMode,
+                                          keyPtr, kCCKeySizeAES256,
+                                          NULL,/* 初始化向量(可选) */
+                                          [aData bytes], dataLength,/* 输入 */
+                                          buffer, bufferSize,/* 输出 */
+                                          &numBytesDecrypted);
+    if (cryptStatus == kCCSuccess) {
+        return [NSData dataWithBytesNoCopy:buffer length:numBytesDecrypted];
+    }
+    free(buffer);
+    return nil;
 }
 
 @end

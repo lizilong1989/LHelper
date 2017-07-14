@@ -9,6 +9,7 @@
 typedef enum{
     LEncryptECB = 0,
     LEncryptCBC,
+    LEncryptCTR,
 }LEncryptType;
 
 /*!

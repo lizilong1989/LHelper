@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D2BFFE191F14EE84009D2AC2 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2BFFE181F14EE84009D2AC2 /* Security.framework */; };
 		D2C1EF9A1F0F448800E47C4C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C1EF991F0F448800E47C4C /* main.m */; };
 		D2C1EF9D1F0F448800E47C4C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C1EF9C1F0F448800E47C4C /* AppDelegate.m */; };
 		D2C1EFA01F0F448800E47C4C /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C1EF9F1F0F448800E47C4C /* ViewController.m */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D2BFFE181F14EE84009D2AC2 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		D2C1EF951F0F448700E47C4C /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2C1EF991F0F448800E47C4C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D2C1EF9B1F0F448800E47C4C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -42,18 +44,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2BFFE191F14EE84009D2AC2 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D2BFFE171F14EE84009D2AC2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D2BFFE181F14EE84009D2AC2 /* Security.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		D2C1EF8C1F0F448700E47C4C = {
 			isa = PBXGroup;
 			children = (
 				D2C1EFAF1F0F44F700E47C4C /* src */,
 				D2C1EF971F0F448700E47C4C /* Demo */,
 				D2C1EF961F0F448700E47C4C /* Products */,
+				D2BFFE171F14EE84009D2AC2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -344,6 +356,7 @@
 				D2C1EFAE1F0F448800E47C4C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

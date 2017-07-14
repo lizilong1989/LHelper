@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = 'LHelper'
-  spec.version      = '1.0.0'
+  spec.version      = '1.0.1'
   spec.license      = 'MIT'
   spec.summary      = 'An Objective-C tool for Encrypt'
   spec.homepage     = 'https://github.com/lizilong1989/LHelper'

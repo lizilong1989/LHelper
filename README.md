@@ -40,10 +40,14 @@ AES加密数据调用示例
 //测试数据
 NSData *data = [@"Hello world" dataUsingEncoding:NSUTF8StringEncoding];
 
-//AES加密
-NSData *encryptData = [[LEncryptHelper shareHelper] aesEncryptWithData:data key:@"1234567890123456"];
-
-//AES解密
-NSData *decodeData = [[LEncryptHelper shareHelper] aesDecodeWithData:encryptData key:@"1234567890123456"];
+//DES加密
+NSData *encryptData = [[LEncryptHelper shareHelper] aesEncryptWithData:data
+                                                                   key:@"12345678abcdefgh"
+                                                                  type:LEncryptECB];
+    
+//DES解密
+NSData *decodeData = [[LEncryptHelper shareHelper] aesDecodeWithData:encryptData
+                                                                 key:@"12345678abcdefgh"
+                                                                type:LEncryptECB];
 
 ```
