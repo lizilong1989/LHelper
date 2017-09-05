@@ -7,19 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D2BFFE191F14EE84009D2AC2 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2BFFE181F14EE84009D2AC2 /* Security.framework */; };
+		D2111D011F5E4ADA00196E11 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2BFFE181F14EE84009D2AC2 /* Security.framework */; };
+		D2350A381F18726E0087EDC9 /* IMG_3378.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D2350A371F18726E0087EDC9 /* IMG_3378.jpg */; };
 		D2C1EF9A1F0F448800E47C4C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C1EF991F0F448800E47C4C /* main.m */; };
 		D2C1EF9D1F0F448800E47C4C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C1EF9C1F0F448800E47C4C /* AppDelegate.m */; };
 		D2C1EFA01F0F448800E47C4C /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C1EF9F1F0F448800E47C4C /* ViewController.m */; };
 		D2C1EFA31F0F448800E47C4C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D2C1EFA11F0F448800E47C4C /* Main.storyboard */; };
 		D2C1EFA51F0F448800E47C4C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D2C1EFA41F0F448800E47C4C /* Assets.xcassets */; };
 		D2C1EFA81F0F448800E47C4C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D2C1EFA61F0F448800E47C4C /* LaunchScreen.storyboard */; };
-		D2C1EFB71F0F44F700E47C4C /* des.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2C1EFB11F0F44F700E47C4C /* des.cpp */; };
-		D2C1EFB81F0F44F700E47C4C /* LEncryptHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = D2C1EFB41F0F44F700E47C4C /* LEncryptHelper.mm */; };
-		D2C1EFB91F0F44F700E47C4C /* aes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2C1EFB51F0F44F700E47C4C /* aes.cpp */; };
+		D2C1EFB81F0F44F700E47C4C /* LEncryptHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C1EFB41F0F44F700E47C4C /* LEncryptHelper.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D2350A371F18726E0087EDC9 /* IMG_3378.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = IMG_3378.jpg; path = ../../resource/IMG_3378.jpg; sourceTree = "<group>"; };
 		D2BFFE181F14EE84009D2AC2 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		D2C1EF951F0F448700E47C4C /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2C1EF991F0F448800E47C4C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -31,12 +31,8 @@
 		D2C1EFA41F0F448800E47C4C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D2C1EFA71F0F448800E47C4C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D2C1EFA91F0F448800E47C4C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D2C1EFB11F0F44F700E47C4C /* des.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = des.cpp; sourceTree = "<group>"; };
-		D2C1EFB21F0F44F700E47C4C /* des.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = des.hpp; sourceTree = "<group>"; };
 		D2C1EFB31F0F44F700E47C4C /* LEncryptHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEncryptHelper.h; sourceTree = "<group>"; };
-		D2C1EFB41F0F44F700E47C4C /* LEncryptHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LEncryptHelper.mm; sourceTree = "<group>"; };
-		D2C1EFB51F0F44F700E47C4C /* aes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = aes.cpp; sourceTree = "<group>"; };
-		D2C1EFB61F0F44F700E47C4C /* aes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = aes.hpp; sourceTree = "<group>"; };
+		D2C1EFB41F0F44F700E47C4C /* LEncryptHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LEncryptHelper.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,7 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D2BFFE191F14EE84009D2AC2 /* Security.framework in Frameworks */,
+				D2111D011F5E4ADA00196E11 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,6 +58,7 @@
 		D2C1EF8C1F0F448700E47C4C = {
 			isa = PBXGroup;
 			children = (
+				D2350A371F18726E0087EDC9 /* IMG_3378.jpg */,
 				D2C1EFAF1F0F44F700E47C4C /* src */,
 				D2C1EF971F0F448700E47C4C /* Demo */,
 				D2C1EF961F0F448700E47C4C /* Products */,
@@ -113,12 +110,8 @@
 		D2C1EFB01F0F44F700E47C4C /* encrypt */ = {
 			isa = PBXGroup;
 			children = (
-				D2C1EFB11F0F44F700E47C4C /* des.cpp */,
-				D2C1EFB21F0F44F700E47C4C /* des.hpp */,
 				D2C1EFB31F0F44F700E47C4C /* LEncryptHelper.h */,
-				D2C1EFB41F0F44F700E47C4C /* LEncryptHelper.mm */,
-				D2C1EFB51F0F44F700E47C4C /* aes.cpp */,
-				D2C1EFB61F0F44F700E47C4C /* aes.hpp */,
+				D2C1EFB41F0F44F700E47C4C /* LEncryptHelper.m */,
 			);
 			path = encrypt;
 			sourceTree = "<group>";
@@ -181,6 +174,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2350A381F18726E0087EDC9 /* IMG_3378.jpg in Resources */,
 				D2C1EFA81F0F448800E47C4C /* LaunchScreen.storyboard in Resources */,
 				D2C1EFA51F0F448800E47C4C /* Assets.xcassets in Resources */,
 				D2C1EFA31F0F448800E47C4C /* Main.storyboard in Resources */,
@@ -194,12 +188,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D2C1EFB71F0F44F700E47C4C /* des.cpp in Sources */,
 				D2C1EFA01F0F448800E47C4C /* ViewController.m in Sources */,
 				D2C1EF9D1F0F448800E47C4C /* AppDelegate.m in Sources */,
-				D2C1EFB91F0F44F700E47C4C /* aes.cpp in Sources */,
 				D2C1EF9A1F0F448800E47C4C /* main.m in Sources */,
-				D2C1EFB81F0F44F700E47C4C /* LEncryptHelper.mm in Sources */,
+				D2C1EFB81F0F44F700E47C4C /* LEncryptHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -15,7 +15,6 @@
 @property (nonatomic, strong) UITextField *textField;
 @property (nonatomic, strong) UITextField *pwdField;
 @property (nonatomic, strong) UITextView *textView;
-@property (nonatomic, strong) UIButton *desBtn;
 @property (nonatomic, strong) UIButton *aesBtn;
 
 @end
@@ -28,7 +27,6 @@
     
     [self.view addSubview:self.textField];
     [self.view addSubview:self.pwdField];
-    [self.view addSubview:self.desBtn];
     [self.view addSubview:self.aesBtn];
     [self.view addSubview:self.textView];
 }
@@ -57,24 +55,11 @@
     return _pwdField;
 }
 
-- (UIButton *)desBtn
-{
-    if (_desBtn == nil) {
-        _desBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        _desBtn.frame = CGRectMake(0, CGRectGetMaxY(_pwdField.frame) + 5, CGRectGetWidth(self.view.frame), 50);
-        _desBtn.backgroundColor = [UIColor purpleColor];
-        [_desBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        [_desBtn setTitle:@"DES加密" forState:UIControlStateNormal];
-        [_desBtn addTarget:self action:@selector(desEncryptAction) forControlEvents:UIControlEventTouchUpInside];
-    }
-    return _desBtn;
-}
-
 - (UIButton *)aesBtn
 {
     if (_aesBtn == nil) {
         _aesBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        _aesBtn.frame = CGRectMake(0, CGRectGetMaxY(_desBtn.frame) + 5, CGRectGetWidth(self.view.frame), 50);
+        _aesBtn.frame = CGRectMake(0, CGRectGetMaxY(_pwdField.frame) + 5, CGRectGetWidth(self.view.frame), 50);
         _aesBtn.backgroundColor = [UIColor purpleColor];
         [_aesBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [_aesBtn setTitle:@"AES加密" forState:UIControlStateNormal];
@@ -95,32 +80,6 @@
 
 #pragma mark - action
 
-- (void)desEncryptAction
-{
-    NSString *text = _textField.text;
-    
-    if (text.length == 0) {
-        return;
-    }
-    
-    if (_pwdField.text.length == 0) {
-        return;
-    }
-    
-    NSData *data = [text dataUsingEncoding:NSUTF8StringEncoding];
-    
-    //设置DES密钥
-    [[LEncryptHelper shareHelper] setDesKey:@"12345678"];
-    
-    //DES加密
-    NSData *encryptData = [[LEncryptHelper shareHelper] desEncryptWithData:data key:_pwdField.text];
-    
-    //DES解密
-    NSData *decodeData = [[LEncryptHelper shareHelper] desDecodeWithData:encryptData key:_pwdField.text];
-    
-    _textView.text = [NSString stringWithFormat:@"DES\ndata:%@\nencryptData:%@\ndecodeData:%@\n%@\n",data,encryptData,decodeData,[[NSString alloc] initWithData:decodeData encoding:NSUTF8StringEncoding]];
-}
-
 - (void)aesEncryptAction
 {
     NSString *text = _textField.text;
@@ -135,17 +94,21 @@
     
     NSData *data = [text dataUsingEncoding:NSUTF8StringEncoding];
     
+    unsigned char iv[16] = {'0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'};
+    
     //DES加密
-    NSData *encryptData = [[LEncryptHelper shareHelper] aesEncryptWithData:data
-                                                                       key:_pwdField.text
-                                                                      type:LEncryptECB];
+    NSData *encryptData = [LEncryptHelper encryptWithData:data
+                                                      key:[_pwdField.text dataUsingEncoding:NSUTF8StringEncoding].bytes
+                                                       iv:[NSData dataWithBytes:iv length:16]
+                                                     type:EMCrypt_aes128cbc];
     
     //DES解密
-    NSData *decodeData = [[LEncryptHelper shareHelper] aesDecodeWithData:encryptData
-                                                                     key:_pwdField.text
-                                                                    type:LEncryptECB];
+    NSData *decodeData = [LEncryptHelper decryptWithData:encryptData
+                                                     key:[_pwdField.text dataUsingEncoding:NSUTF8StringEncoding].bytes
+                                                      iv:[NSData dataWithBytes:iv length:16]
+                                                    type:EMCrypt_aes128cbc];
     
-    _textView.text = [NSString stringWithFormat:@"AES\ndata:%@\nencryptData:%@\ndecodeData:%@\n%@\n",data,encryptData,decodeData,[[NSString alloc] initWithData:decodeData encoding:NSUTF8StringEncoding]];
+    _textView.text = [NSString stringWithFormat:@"aes\ndata:%@\nencryptData:%@\ndecodeData:%@\n%@\n",data,encryptData,decodeData,[[NSString alloc] initWithData:decodeData encoding:NSUTF8StringEncoding]];
 }
 
 - (void)didReceiveMemoryWarning {

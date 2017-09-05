@@ -1,5 +1,5 @@
 # LHelper
-这是一个简单的加密示例，实现了DES，AES等加密方式，可以直接对Objective-C中NSData数据进行加密.
+这是一个简单的加密示例，实现AES加密方式（CCCrypt的简单封装），可以直接对Objective-C中NSData数据进行加密.
 
 ## 集成
 
@@ -17,37 +17,29 @@ pod 'LHelper'
 
 ## 使用方法
 
-DES加密数据调用示例
-
-```
-//测试数据
-NSData *data = [@"Hello world" dataUsingEncoding:NSUTF8StringEncoding];
-
-//设置DES密钥
-[[LEncryptHelper shareHelper] setDesKey:@"12345678"];
-
-//DES加密
-NSData *encryptData = [[LEncryptHelper shareHelper] desEncryptWithData:data key:nil];
-
-//DES解密
-NSData *decodeData = [[LEncryptHelper shareHelper] desDecodeWithData:encryptData key:nil];
-
-```
 
 AES加密数据调用示例
 
 ```
-//测试数据
-NSData *data = [@"Hello world" dataUsingEncoding:NSUTF8StringEncoding];
-
-//DES加密
-NSData *encryptData = [[LEncryptHelper shareHelper] aesEncryptWithData:data
-                                                                   key:@"12345678abcdefgh"
-                                                                  type:LEncryptECB];
+	//加密数据
+    NSData *data = [@"hello world" dataUsingEncoding:NSUTF8StringEncoding];
     
-//DES解密
-NSData *decodeData = [[LEncryptHelper shareHelper] aesDecodeWithData:encryptData
-                                                                 key:@"12345678abcdefgh"
-                                                                type:LEncryptECB];
+    //随机生成key
+    NSData *key = [LEncryptHelper generalKey:16];
+    
+    //iv偏移量
+    unsigned char iv[16] = {'0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'};
+    
+    //DES加密
+    NSData *encryptData = [LEncryptHelper encryptWithData:data
+                                                      key:key.bytes
+                                                       iv:[NSData dataWithBytes:iv length:16]
+                                                     type:EMCrypt_aes128cbc];
+    
+    //DES解密
+    NSData *decodeData = [LEncryptHelper decryptWithData:encryptData
+                                                     key:key.bytes
+                                                      iv:[NSData dataWithBytes:iv length:16]
+                                                    type:EMCrypt_aes128cbc];
 
 ```
